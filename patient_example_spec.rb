@@ -85,12 +85,14 @@ describe Hospital do
 
 	describe "#add_patient" do
 
-		let (:patients) { Mongo::Connection.new.db('patients')["patients"] }
+		let (:db) { MongoClient.new.db('hospital') }
+		let (:patients) { db.collection("patients") }
 
 		context "when passed a valid patient" do
 			it "updates the patient count by one" do
 				hospital.add_patient
 				expect(patients.count).to eq(1)
+				# expect(patients.find_one["name"]).to eq("")
 			end
 		end
 	end
