@@ -4,7 +4,7 @@ include Mongo
 client = MongoClient.new
 db = client.db("hospital")
 
-patients = db.collection("patients")
+$patients = db.collection("patients")
 
 seed_data = [ 
 	{
@@ -25,7 +25,7 @@ seed_data = [
 	}
 ]
 
-patients.insert(seed_data)
+$patients.insert(seed_data)
 # patients.find.each { |row| puts row.inspect }
 
 class Patient
@@ -44,8 +44,57 @@ class Patient
 	def healed?
 		healed
 	end
+end
 
+class Hospital
+
+	attr_reader :name, :address, :staff_count, :patient_count
+
+	def initialize(name, address, staff_count)
+		@name = name
+		@address = address
+		@staff_count = staff_count
+		# @patient_count = patient_count
+	end
+
+	def add_patient
+		patient_name = get_name
+		patient_age = get_age.to_i
+		patient_illness = get_illness
+		patient_doctor = ["J.D."]
+		patient_room_number = rand(1..100)
+
+		patient_info = { name: patient_name,
+										 age: patient_age,
+										 illness: patient_illness,
+										 doctor: patient_doctor,
+										 room_number: patient_room_number }
+
+		$patients.insert(patient_info)
+	end
+
+	private
+
+	def prompt
+		print "> "
+		gets.chomp
+	end
+
+	def get_name
+		puts "What is your name?"
+		prompt
+	end
+
+	def get_age
+		puts "How old are you?"
+		prompt
+	end
+
+	def get_illness
+		puts "What are you suffering from?"
+		prompt
+	end
 end
 
 
-patients.drop() # Reset the database
+$patients.drop() # Reset the database
