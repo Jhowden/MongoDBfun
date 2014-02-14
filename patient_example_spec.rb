@@ -1,6 +1,7 @@
 require_relative 'patient_example'
 
 describe Patient do 
+
 	let (:patient) { Patient.new("Bobby McGee", 77, "Myocardial infarction", "J.D.", 12) }
 
 	describe "#initialize" do
@@ -56,6 +57,9 @@ describe Hospital do
 
 	let (:hospital) { Hospital.new("Sacred Heart", "1 Healer Lane", 10) }
 
+	let (:db) { MongoClient.new.db('hospital') }
+	let (:patients) { db.collection("patients") }
+
 	describe "#initialize" do
 
 		context "#name" do
@@ -76,6 +80,12 @@ describe Hospital do
 			end
 		end
 
+		context "#list_of_available_rooms" do
+			it "displays the count of available rooms" do
+				expect(hospital.list_of_available_rooms.count).to eq(48)
+			end
+		end
+
 		# context "#patient_count" do
 		# 	it "displays the hospital's patient count" do
 		# 		expect(hospital.patient_count).to eq(3)
@@ -85,14 +95,31 @@ describe Hospital do
 
 	describe "#add_patient" do
 
-		let (:db) { MongoClient.new.db('hospital') }
-		let (:patients) { db.collection("patients") }
-
 		context "when passed a valid patient" do
 			it "updates the patient count by one" do
-				hospital.add_patient
+				hospital.add_patient("Bob", 77, "Hip Displasia", ["J.D."])
 				expect(patients.count).to eq(1)
-				# expect(patients.find_one["name"]).to eq("")
+			end
+		end
+	end
+
+	describe "#discharge_patient" do
+
+		context "when finding a listed patient" do
+			it "descreases the patient count by one" do
+				expect(patients.count).to eq(1)
+				hospital.discharge_patient("Bob")
+				expect(patients.count).to eq(0)
+			end
+		end
+	end
+
+	describe "#update_patient_information" do
+		context "when passed a valid field" do
+			it "updates the patient's information" do
+				hospital.add_patient("Bob", 77, "Hip Displasia", ["J.D."])
+				hospital.update_patient_information("name", "Bob", "Bobby")
+				expect(patients.find_one["name"]).to eq("Bobby")
 			end
 		end
 	end
