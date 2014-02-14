@@ -6,45 +6,24 @@ db = client.db("hospital")
 
 $patients = db.collection("patients")
 
-seed_data = [ 
-	{
-		'_id' => 1,
-		'name' => "Joe Schmoe",
-		'age' => 30,
-		'illness' => 'Flu',
-		'doctor' => ["J.D."],
-		'room_number' => 1
-	},
-	{
-		'_id' => 2,
-		'name' => "Jane Doe",
-		'age' => 63,
-		'illness' => 'Broken leg',
-		'doctor' => ["J.D."],
-		'room_number' => 2
-	}
-]
+# class Patient
 
-$patients.insert(seed_data)
-# patients.find.each { |row| puts row.inspect }
+# 	attr_reader :name, :age, :illness, :doctor, :room_number
+# 	attr_accessor :healed
 
-class Patient
+# 	def initialize(name, age, illness, doctor, room_number)
+# 		@name = name
+# 		@age = age
+# 		@illness = illness
+# 		@doctor = doctor
+# 		@room_number = room_number
+# 		@healed = false
+# 	end
 
-	attr_reader :name, :age, :illness, :doctor, :room_number, :healed
-
-	def initialize(name, age, illness, doctor, room_number)
-		@name = name
-		@age = age
-		@illness = illness
-		@doctor = doctor
-		@room_number = room_number
-		@healed = false
-	end
-
-	def healed?
-		healed
-	end
-end
+# 	def healed?
+# 		healed
+# 	end
+# end
 
 class Hospital
 
@@ -55,17 +34,19 @@ class Hospital
 		@address = address
 		@staff_count = staff_count
 		@list_of_available_rooms = available_rooms
-		@patient_count = $patients.count
+		@patient_count = count_patients
 	end
 
 	def add_patient(name, age, illness, doctor)
 		patient_room_number = select_room
 
-		patient_info = { name: name,
-										 age: age,
-										 illness: illness,
-										 doctor: doctor,
-										 room_number: patient_room_number }
+		patient_info = {  _id: patient_count + 1,
+										  name: name,
+										  age: age,
+										  illness: illness,
+										  doctor: doctor,
+										  healed: false,
+										  room_number: patient_room_number }
 
 		$patients.insert(patient_info)
 	end
@@ -86,11 +67,15 @@ class Hospital
 		end
 	end
 
+	def heal_patient(field, value)
+		$patients.update({ field => value}, {"$set" => {"healed" => true }} )
+	end
+
 	private
 
 	def available_rooms
 		available_room_numbers = []
-		rooms = (3..50)
+		rooms = (3..10)
 		rooms.each {|room| available_room_numbers << room}
 		available_room_numbers
 	end
@@ -100,7 +85,8 @@ class Hospital
 		list_of_available_rooms.delete(selected_room)
 		selected_room
 	end
+
+	def count_patients
+		$patients.count
+	end
 end
-
-
-$patients.drop() # Reset the database

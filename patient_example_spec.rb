@@ -1,57 +1,57 @@
 require_relative 'patient_example'
 
-describe Patient do 
+# describe Patient do 
 
-	let (:patient) { Patient.new("Bobby McGee", 77, "Myocardial infarction", "J.D.", 12) }
+# 	let (:patient) { Patient.new("Bobby McGee", 77, "Myocardial infarction", "J.D.", 12) }
 
-	describe "#initialize" do
+# 	describe "#initialize" do
 
-		context "#name" do
-			it "displays a patient's name" do
-				expect(patient.name).to eq("Bobby McGee")
-			end
-		end
+# 		context "#name" do
+# 			it "displays a patient's name" do
+# 				expect(patient.name).to eq("Bobby McGee")
+# 			end
+# 		end
 
-		context "#age" do
-			it "displays a patient's age" do
-				expect(patient.age).to eq(77)
-			end
-		end
+# 		context "#age" do
+# 			it "displays a patient's age" do
+# 				expect(patient.age).to eq(77)
+# 			end
+# 		end
 
-		context "#illness" do
-			it "displays a patient's illness" do
-			  expect(patient.illness).to eq("Myocardial infarction")
-			end
-		end
+# 		context "#illness" do
+# 			it "displays a patient's illness" do
+# 			  expect(patient.illness).to eq("Myocardial infarction")
+# 			end
+# 		end
 
-		context "#doctor" do
-			it "displays a patient's doctor" do
-				expect(patient.doctor).to eq("J.D.")
-			end
-		end
+# 		context "#doctor" do
+# 			it "displays a patient's doctor" do
+# 				expect(patient.doctor).to eq("J.D.")
+# 			end
+# 		end
 
-		context "#room_number" do
-			it "displays a patient's room number" do
-				expect(patient.room_number).to eq(12)
-			end
-		end
+# 		context "#room_number" do
+# 			it "displays a patient's room number" do
+# 				expect(patient.room_number).to eq(12)
+# 			end
+# 		end
 
-		context "#healed" do
-			it "displays if a patient is healed" do
-				expect(patient.healed).to eq(false)
-			end
-		end
-	end
+# 		context "#healed" do
+# 			it "displays if a patient is healed" do
+# 				expect(patient.healed).to eq(false)
+# 			end
+# 		end
+# 	end
 
-	describe "#healed?" do
+# 	describe "#healed?" do
 
-		context "when patient is not healed" do
-			it "returns false" do
-				expect(patient.healed?).to eq(false)
-			end
-		end
-	end
-end
+# 		context "when patient is not healed" do
+# 			it "returns false" do
+# 				expect(patient.healed?).to eq(false)
+# 			end
+# 		end
+# 	end
+# end
 
 describe Hospital do
 
@@ -59,6 +59,10 @@ describe Hospital do
 
 	let (:db) { MongoClient.new.db('hospital') }
 	let (:patients) { db.collection("patients") }
+
+	after(:each) do
+		patients.drop()
+	end
 
 	describe "#initialize" do
 
@@ -82,7 +86,7 @@ describe Hospital do
 
 		context "#list_of_available_rooms" do
 			it "displays the count of available rooms" do
-				expect(hospital.list_of_available_rooms.count).to eq(48)
+				expect(hospital.list_of_available_rooms.count).to eq(8)
 			end
 		end
 
@@ -107,7 +111,7 @@ describe Hospital do
 
 		context "when finding a listed patient" do
 			it "descreases the patient count by one" do
-				expect(patients.count).to eq(1)
+				hospital.add_patient("Bob", 77, "Hip Displasia", ["J.D."])
 				hospital.discharge_patient("Bob")
 				expect(patients.count).to eq(0)
 			end
@@ -115,11 +119,23 @@ describe Hospital do
 	end
 
 	describe "#update_patient_information" do
+
 		context "when passed a valid field" do
 			it "updates the patient's information" do
 				hospital.add_patient("Bob", 77, "Hip Displasia", ["J.D."])
 				hospital.update_patient_information("name", "Bob", "Bobby")
 				expect(patients.find_one["name"]).to eq("Bobby")
+			end
+		end
+	end
+
+	describe "#heal_patient" do
+
+		context "when healing a patient" do
+			it "updates patient's heal field to true" do
+				hospital.add_patient("Bob", 77, "Hip Displasia", ["J.D."])
+				hospital.heal_patient("name", "Bob")
+				expect(patients.find_one["healed"]).to eq(true)
 			end
 		end
 	end
