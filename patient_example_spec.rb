@@ -86,11 +86,11 @@ describe Hospital do
 			end
 		end
 
-		# context "#patient_count" do
-		# 	it "displays the hospital's patient count" do
-		# 		expect(hospital.patient_count).to eq(3)
-		# 	end
-		# end
+		context "#patient_count" do
+			it "displays the hospital's patient count" do
+				expect(hospital.patient_count).to eq(0)
+			end
+		end
 	end
 
 	describe "#add_patient" do

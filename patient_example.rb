@@ -55,7 +55,7 @@ class Hospital
 		@address = address
 		@staff_count = staff_count
 		@list_of_available_rooms = available_rooms
-		# @patient_count = patient_count
+		@patient_count = $patients.count
 	end
 
 	def add_patient(name, age, illness, doctor)
