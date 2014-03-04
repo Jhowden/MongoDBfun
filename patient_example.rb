@@ -22,12 +22,12 @@ class Hospital
     patient_room_number = select_room
 
     patient_info = {  _id: patient_count + 1,
-		                  name: name,
-		                  age: age,
-		                  illness: illness,
-		                  doctor: doctor,
-		                  healed: false,
-		                  room_number: patient_room_number }
+name: name,
+age: age,
+illness: illness,
+doctor: doctor,
+healed: false,
+room_number: patient_room_number }
 
     $patients.insert(patient_info)
   end
