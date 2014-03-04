@@ -17,7 +17,7 @@ class Hospital
     @list_of_available_rooms = available_rooms
     @patient_count = count_patients
   end
-
+ 
   def add_patient(name, age, illness, doctor)
     patient_room_number = select_room
 
