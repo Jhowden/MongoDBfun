@@ -2,7 +2,7 @@ require_relative 'patient_example'
 
 describe Hospital do
 
-	let (:hospital) { Hospital.new("Sacred Heart", "1 Healer Lane", 10) }
+  let (:hospital) { Hospital.new("Sacred Heart", "1 Healer Lane", 10) }
 
 	let (:db) { MongoClient.new.db('hospital') }
 	let (:patients) { db.collection("patients") }
